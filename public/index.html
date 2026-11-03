@@ -1,0 +1,610 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Denuncias RN 7</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Layout: una columna de ~780px; banda de encabezado con pestañas; el formulario avanza en etapas numeradas (orden real de una denuncia) */
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --field:#fbfcfd; --ink:#17222c; --muted:#56687a; --line:#d3dbe2;
+  --band:#263d4f; --band-ink:#ffffff; --band-muted:#b9c9d6;
+  --accent:#263d4f; --accent-ink:#ffffff; --focus:#2f6fa3;
+  --signal:#e2a400; --signal-ink:#1d1600;
+  --ok:#1f7a4d; --ok-bg:#e3f2ea; --warn:#9a5b00; --warn-bg:#fbefd9; --crit:#b3261e; --crit-bg:#fbe5e3;
+  --display:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e151b; --surface:#16212a; --field:#111a21; --ink:#e5ecf1; --muted:#93a5b4; --line:#2a3a47;
+  --band:#1a2b38; --band-ink:#f2f6f9; --band-muted:#94abbd;
+  --accent:#a7cbe6; --accent-ink:#0e151b; --focus:#7fb4dd;
+  --signal:#f2b91e; --signal-ink:#1d1600;
+  --ok:#62c793; --ok-bg:#16301f; --warn:#f0a845; --warn-bg:#352612; --crit:#f2877f; --crit-bg:#3a1a18;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0e151b; --surface:#16212a; --field:#111a21; --ink:#e5ecf1; --muted:#93a5b4; --line:#2a3a47;
+  --band:#1a2b38; --band-ink:#f2f6f9; --band-muted:#94abbd;
+  --accent:#a7cbe6; --accent-ink:#0e151b; --focus:#7fb4dd;
+  --signal:#f2b91e; --signal-ink:#1d1600;
+  --ok:#62c793; --ok-bg:#16301f; --warn:#f0a845; --warn-bg:#352612; --crit:#f2877f; --crit-bg:#3a1a18;
+  color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--band)}
+.wrap{max-width:820px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.band{background:var(--band);color:var(--band-ink)}
+header.band .wrap{padding-block:22px 0}
+.eyebrow{font:600 12px/1.2 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--band-muted)}
+h1{font:700 30px/1.1 var(--display);margin:6px 0 4px;text-wrap:balance;letter-spacing:.01em}
+.lede{color:var(--band-muted);margin:0 0 16px;max-width:62ch}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{font:600 15px/1 var(--display);letter-spacing:.03em;text-transform:uppercase;border:0;background:transparent;color:var(--band-muted);padding:12px 14px 13px;border-radius:6px 6px 0 0;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--bg);color:var(--ink)}
+.tab:focus-visible{outline:2px solid var(--signal);outline-offset:-2px}
+.count{font-family:var(--mono);font-size:12px;margin-left:6px;padding:2px 6px;border-radius:10px;background:var(--signal);color:var(--signal-ink)}
+main .wrap{padding-block:24px 64px}
+.notice{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:12px 14px;margin-bottom:16px;color:var(--muted);font-size:14px}
+.notice.crit{border-color:var(--crit);background:var(--crit-bg);color:var(--ink)}
+fieldset{border:0;margin:0 0 18px;padding:20px;background:var(--surface);border:1px solid var(--line);border-radius:10px;min-width:0}
+legend{float:left;width:100%;padding:0;margin-bottom:14px;display:flex;align-items:baseline;gap:10px;font:700 20px/1.2 var(--display);letter-spacing:.01em}
+legend .n{font:500 13px/1 var(--mono);color:var(--muted)}
+legend + *{clear:both}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px 14px}
+.c2{grid-column:span 2}.c3{grid-column:span 3}.c4{grid-column:span 4}.c6{grid-column:span 6}
+@media (max-width:620px){.grid{grid-template-columns:1fr 1fr}.c2,.c3{grid-column:span 1}.c4,.c6{grid-column:span 2}}
+@media (max-width:420px){.grid{grid-template-columns:1fr}.c2,.c3,.c4,.c6{grid-column:span 1}}
+.f{display:flex;flex-direction:column;gap:5px;min-width:0}
+label,.lbl{font-size:13px;font-weight:600;color:var(--ink)}
+.req::after{content:" *";color:var(--crit)}
+.hint{font-size:12px;color:var(--muted)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%;min-width:0}
+textarea{min-height:96px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+.invalid{border-color:var(--crit)!important;background:var(--crit-bg)}
+.km{display:flex;align-items:stretch}
+.km span{font:700 13px/1 var(--display);letter-spacing:.06em;background:var(--signal);color:var(--signal-ink);display:flex;align-items:center;padding:0 10px;border-radius:6px 0 0 6px}
+.km input{border-radius:0 6px 6px 0;font-family:var(--mono)}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.chk{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--field);border-radius:6px;padding:7px 10px;font-weight:500;font-size:14px;cursor:pointer}
+.chk input{width:auto;margin:0;accent-color:var(--accent)}
+.chk:has(input:checked){border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.wheel{display:grid;grid-template-columns:auto auto;gap:6px;width:max-content}
+.decl{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:14px;line-height:1.45}
+.decl input{width:auto;margin-top:3px;accent-color:var(--accent)}
+.disclaimer{font-size:13px;color:var(--muted);border-left:3px solid var(--signal);padding:2px 0 2px 10px;margin:4px 0 0}
+.actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.btn{font:600 15px/1 var(--body);border-radius:7px;padding:12px 18px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn:disabled{opacity:.55;cursor:progress}
+#status{font-size:14px;color:var(--muted)}
+.errbox{display:none}
+.errbox.show{display:block}
+.peajehr{border:0;border-top:1px dashed var(--line);margin:8px 0}
+.done{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:24px}
+.ticket{font:500 26px/1.1 var(--mono);letter-spacing:.02em;margin:6px 0 10px;user-select:all}
+/* Registro */
+.summary{display:flex;flex-wrap:wrap;gap:24px;margin-bottom:16px;padding:14px 18px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.summary div{display:flex;flex-direction:column}
+.summary b{font:700 24px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.summary span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;align-items:center}
+.tools input{flex:1 1 220px;width:auto}.tools select{width:auto}
+.tablebox{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+th{font:600 12px/1.2 var(--body);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr.row{cursor:pointer}
+tr.row:hover td{background:var(--field)}
+td.mono{font-family:var(--mono);font-size:13px;white-space:nowrap}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;font-size:12px;font-weight:600;border-radius:12px;padding:2px 8px;white-space:nowrap}
+.pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.crit{background:var(--crit-bg);color:var(--crit)}
+td select{padding:5px 6px;font-size:13px;width:auto}
+tr.detail td{background:var(--field);padding:16px 18px}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px 22px}
+.dgrid h4{margin:0 0 6px;font:700 15px/1.2 var(--display);letter-spacing:.02em}
+dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:3px 10px;font-size:13px}
+dt{color:var(--muted)}dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.relato{white-space:pre-wrap;font-size:14px;max-width:70ch}
+.files a{display:inline-block;margin:0 10px 4px 0}
+.notes{display:flex;gap:8px;align-items:flex-end;margin-top:12px;flex-wrap:wrap}
+.notes textarea{min-height:60px;flex:1 1 280px}
+.empty{padding:36px 20px;text-align:center;color:var(--muted)}
+a{color:var(--focus)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="band">
+  <div class="wrap">
+    <div class="eyebrow">Caminos del Aconcagua S.A. · RN 7 Tramo Cuyo</div>
+    <h1>Denuncia de siniestro vial</h1>
+    <p class="lede">Registro de daños sufridos por usuarios en la calzada concesionada. Los campos marcados con * son obligatorios.</p>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-form" aria-selected="true" aria-controls="view-form">Nueva denuncia</button>
+      <button class="tab" role="tab" id="tab-peaje" aria-selected="false" aria-controls="view-peaje">Ticket de peaje</button>
+      <button class="tab" role="tab" id="tab-reg" aria-selected="false" aria-controls="view-reg" hidden>Registro<span class="count" id="regCount">0</span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+<div id="dbNotice" class="notice crit" hidden>Esta vista no puede guardar denuncias. Abrí el formulario con una cuenta que tenga acceso de colaborador para registrar datos.</div>
+
+<section id="view-form" role="tabpanel" aria-labelledby="tab-form">
+<form id="f" novalidate>
+
+<fieldset>
+  <legend><span class="n">1</span>Datos del denunciante</legend>
+  <div class="grid">
+    <div class="f c4"><label class="req" for="nombre">Nombre y apellido</label><input id="nombre" name="nombre" required autocomplete="name"></div>
+    <div class="f c2"><label class="req" for="caracter">Carácter</label>
+      <select id="caracter" name="caracter" required>
+        <option value="">Seleccionar…</option><option>Conductor y titular</option><option>Conductor (no titular)</option><option>Titular (no conducía)</option><option>Apoderado / representante</option>
+      </select></div>
+    <div class="f c2"><label class="req" for="docTipo">Tipo de documento</label>
+      <select id="docTipo" name="docTipo" required><option>DNI</option><option>Pasaporte</option><option>RUT (Chile)</option><option>Cédula extranjera</option><option>Otro</option></select></div>
+    <div class="f c2"><label class="req" for="docNum">N° de documento</label><input id="docNum" name="docNum" required inputmode="text"></div>
+    <div class="f c2"><label for="nacionalidad">Nacionalidad</label><input id="nacionalidad" name="nacionalidad" value="Argentina"></div>
+    <div class="f c4"><label for="domicilio">Domicilio real</label><input id="domicilio" name="domicilio" autocomplete="street-address"></div>
+    <div class="f c2"><label for="localidad">Localidad / provincia</label><input id="localidad" name="localidad"></div>
+    <div class="f c3"><label class="req" for="telefono">Teléfono</label><input id="telefono" name="telefono" type="tel" required autocomplete="tel"></div>
+    <div class="f c3"><label class="req" for="email">Correo electrónico</label><input id="email" name="email" type="email" required autocomplete="email"></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend><span class="n">2</span>Vehículo</legend>
+  <div class="grid">
+    <div class="f c2"><label class="req" for="vTipo">Tipo</label>
+      <select id="vTipo" name="vTipo" required><option value="">Seleccionar…</option><option>Automóvil</option><option>Camioneta / SUV</option><option>Utilitario / furgón</option><option>Camión</option><option>Colectivo / minibús</option><option>Motocicleta</option><option>Casa rodante / acoplado</option><option>Otro</option></select></div>
+    <div class="f c2"><label class="req" for="marca">Marca</label><input id="marca" name="marca" required></div>
+    <div class="f c2"><label class="req" for="modelo">Modelo</label><input id="modelo" name="modelo" required></div>
+    <div class="f c2"><label class="req" for="dominio">Dominio (patente)</label><input id="dominio" name="dominio" required style="text-transform:uppercase;font-family:var(--mono)"></div>
+    <div class="f c2"><label for="anio">Año</label><input id="anio" name="anio" inputmode="numeric" maxlength="4"></div>
+    <div class="f c2"><label for="neumaticos">Medida de neumáticos</label><input id="neumaticos" name="neumaticos" placeholder="Ej.: 205/55 R16 91V"></div>
+    <div class="f c6" data-show="caracter=Conductor (no titular)|Apoderado / representante"><label for="titular">Titular registral</label><input id="titular" name="titular" placeholder="Nombre y documento del titular"></div>
+    <div class="f c3"><label for="aseguradora">Compañía de seguros</label><input id="aseguradora" name="aseguradora"></div>
+    <div class="f c3"><label for="poliza">N° de póliza</label><input id="poliza" name="poliza"></div>
+  </div>
+</fieldset>
+
+<fieldset data-show="caracter=Titular (no conducía)|Apoderado / representante">
+  <legend><span class="n">2b</span>Conductor al momento del hecho</legend>
+  <div class="grid">
+    <div class="f c3"><label for="cNombre">Nombre y apellido</label><input id="cNombre" name="cNombre"></div>
+    <div class="f c2"><label for="cDoc">Documento</label><input id="cDoc" name="cDoc"></div>
+    <div class="f c1 c2"><label for="cLic">Licencia de conducir</label><input id="cLic" name="cLic"></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend><span class="n">3</span>Fecha y ubicación del hecho</legend>
+  <div class="grid">
+    <div class="f c2"><label class="req" for="fecha">Fecha</label><input id="fecha" name="fecha" type="date" required></div>
+    <div class="f c2"><label class="req" for="hora">Hora aproximada</label><input id="hora" name="hora" type="time" required></div>
+    <div class="f c2"><label for="km">Kilómetro aproximado</label><div class="km"><span>KM</span><input id="km" name="km" inputmode="decimal" placeholder="1065"></div></div>
+    <div class="f c3"><label class="req" for="sentido">Sentido de circulación</label>
+      <select id="sentido" name="sentido" required><option value="">Seleccionar…</option><option>Este → Oeste (hacia Uspallata / Chile)</option><option>Oeste → Este (hacia Mendoza / San Luis)</option></select></div>
+    <div class="f c3"><label for="carril">Carril</label>
+      <select id="carril" name="carril"><option value="">Seleccionar…</option><option>Derecho</option><option>Izquierdo / sobrepaso</option><option>Banquina</option><option>Único por sentido</option></select></div>
+    <div class="f c6"><label class="req" for="referencia">Ubicación de referencia</label><input id="referencia" name="referencia" required placeholder="Localidad, paraje, calle o punto cercano (ej.: Agrelo, entre calle Cobos y Acceso Sur, Río Blanco)"></div>
+    <div class="f c6"><label for="coords">Coordenadas o enlace de Google Maps</label><input id="coords" name="coords" placeholder="-33.0906, -68.9703 o https://maps.app.goo.gl/…"><span class="hint">Si tiene la ubicación guardada en el teléfono, pegue el enlace aquí.</span></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend><span class="n">4</span>Circunstancias</legend>
+  <div class="grid">
+    <div class="f c2"><label for="luz">Luz</label><select id="luz" name="luz"><option value="">Seleccionar…</option><option>Día</option><option>Noche</option><option>Amanecer / atardecer</option></select></div>
+    <div class="f c2"><label for="clima">Clima</label><select id="clima" name="clima"><option value="">Seleccionar…</option><option>Despejado</option><option>Nublado</option><option>Lluvia</option><option>Nieve / hielo</option><option>Niebla</option><option>Viento fuerte</option></select></div>
+    <div class="f c2"><label for="velocidad">Velocidad aproximada (km/h)</label><input id="velocidad" name="velocidad" inputmode="numeric"></div>
+    <div class="f c3"><label for="senal">¿Había señalización del peligro?</label><select id="senal" name="senal"><option value="">Seleccionar…</option><option>No</option><option>Sí</option><option>No recuerda</option></select></div>
+    <div class="f c3"><label for="ocupantes">Ocupantes del vehículo</label><input id="ocupantes" name="ocupantes" inputmode="numeric" placeholder="Cantidad, incluido el conductor"></div>
+    <div class="f c6"><label class="req" for="relato">Relato del hecho</label><textarea id="relato" name="relato" required placeholder="Describa cómo ocurrió: qué encontró en la calzada (pozo, bache, desnivel), si pudo verlo antes, si había otros vehículos, y qué hizo después."></textarea></div>
+    <div class="f c2"><label for="lesionados">¿Hubo personas lesionadas?</label><select id="lesionados" name="lesionados"><option>No</option><option>Sí</option></select></div>
+    <div class="f c4" data-show="lesionados=Sí"><label for="lesiones">Detalle de lesiones y atención recibida</label><input id="lesiones" name="lesiones"></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend><span class="n">5</span>Daños</legend>
+  <div class="grid">
+    <div class="f c6"><span class="lbl req" id="lblComp">Partes dañadas</span>
+      <div class="checks" role="group" aria-labelledby="lblComp" id="componentes">
+        <label class="chk"><input type="checkbox" name="componentes" value="Neumático / cubierta">Neumático / cubierta</label>
+        <label class="chk"><input type="checkbox" name="componentes" value="Llanta">Llanta</label>
+        <label class="chk"><input type="checkbox" name="componentes" value="Tren delantero / alineación">Tren delantero / alineación</label>
+        <label class="chk"><input type="checkbox" name="componentes" value="Amortiguadores / suspensión">Amortiguadores / suspensión</label>
+        <label class="chk"><input type="checkbox" name="componentes" value="Palier / transmisión">Palier / transmisión</label>
+        <label class="chk"><input type="checkbox" name="componentes" value="Carrocería / paragolpes">Carrocería / paragolpes</label>
+        <label class="chk"><input type="checkbox" name="componentes" value="Bajos / cárter">Bajos / cárter</label>
+        <label class="chk"><input type="checkbox" name="componentes" value="Otro">Otro</label>
+      </div></div>
+    <div class="f c6"><span class="lbl" id="lblPos">Ruedas afectadas</span>
+      <div class="wheel" role="group" aria-labelledby="lblPos">
+        <label class="chk"><input type="checkbox" name="posiciones" value="Delantera izquierda">Delantera izq.</label>
+        <label class="chk"><input type="checkbox" name="posiciones" value="Delantera derecha">Delantera der.</label>
+        <label class="chk"><input type="checkbox" name="posiciones" value="Trasera izquierda">Trasera izq.</label>
+        <label class="chk"><input type="checkbox" name="posiciones" value="Trasera derecha">Trasera der.</label>
+      </div><span class="hint">Izquierda = lado del conductor.</span></div>
+    <div class="f c6"><label class="req" for="detalle">Detalle de los daños</label><textarea id="detalle" name="detalle" required placeholder="Ej.: corte en el flanco de la cubierta delantera derecha, llanta deformada, desalineación."></textarea></div>
+    <div class="f c2"><label for="monto">Monto reclamado o estimado ($)</label><input id="monto" name="monto" inputmode="decimal" placeholder="250000"></div>
+    <div class="f c2"><label for="reparado">¿Ya reparó o reemplazó?</label><select id="reparado" name="reparado"><option>No</option><option>Sí</option><option>Parcialmente</option></select></div>
+    <div class="f c2"><label for="inspeccion">¿Vehículo y piezas disponibles para inspección?</label><select id="inspeccion" name="inspeccion"><option>Sí</option><option>No</option></select></div>
+    <div class="f c6" data-show="inspeccion=Sí"><label for="inspLugar">Dónde y cuándo puede inspeccionarse</label><input id="inspLugar" name="inspLugar" placeholder="Domicilio, gomería o taller y horario"></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend><span class="n">6</span>Constancias y testigos</legend>
+  <div class="grid">
+    <div class="f c2"><label for="peaje">¿Conserva el comprobante de peaje?</label><select id="peaje" name="peaje"><option value="">Seleccionar…</option><option>Sí</option><option>No</option><option>Paga con TelePASE</option></select></div>
+    <div class="f c4" data-show="peaje=Sí|Paga con TelePASE"><label for="peajeDet">Estación, fecha y hora del pago</label><input id="peajeDet" name="peajeDet"></div>
+    <div class="f c2"><label for="denuncia">¿Hizo denuncia policial o en fiscalía?</label><select id="denuncia" name="denuncia"><option value="">Seleccionar…</option><option>Sí</option><option>No</option></select></div>
+    <div class="f c4" data-show="denuncia=Sí"><label for="denunciaDet">Dependencia, fecha y número</label><input id="denunciaDet" name="denunciaDet"></div>
+    <div class="f c6"><span class="lbl" id="lblAsis">Asistencia recibida</span>
+      <div class="checks" role="group" aria-labelledby="lblAsis">
+        <label class="chk"><input type="checkbox" name="asistencia" value="Personal de la concesionaria">Personal de la concesionaria</label>
+        <label class="chk"><input type="checkbox" name="asistencia" value="Grúa / remolque">Grúa / remolque</label>
+        <label class="chk"><input type="checkbox" name="asistencia" value="Auxilio de su aseguradora">Auxilio de su aseguradora</label>
+        <label class="chk"><input type="checkbox" name="asistencia" value="Policía / Gendarmería">Policía / Gendarmería</label>
+        <label class="chk"><input type="checkbox" name="asistencia" value="Ninguna">Ninguna</label>
+      </div></div>
+    <div class="f c6"><label for="testigos">Testigos</label><input id="testigos" name="testigos" placeholder="Nombre y contacto"></div>
+    <div class="f c6"><label for="terceros">Otros vehículos involucrados</label><input id="terceros" name="terceros" placeholder="Dominio, conductor, aseguradora"></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend><span class="n">7</span>Documentación</legend>
+  <div class="grid">
+    <div class="f c6" id="fileBox"><label for="adjuntos">Fotos, facturas, presupuestos, cédula, licencia, denuncia</label>
+      <input id="adjuntos" name="adjuntos" type="file" multiple accept="image/jpeg,image/png,image/webp,application/pdf,video/mp4">
+      <span class="hint">JPG, PNG, PDF o MP4, hasta 20 MB cada uno. Incluya fotos del pozo, del daño y del vehículo completo con la patente visible.</span></div>
+    <div class="f c6" id="fileFallback" hidden><p class="hint" style="margin:0">En esta vista no se pueden adjuntar archivos. Envíelos a atencionalusuario@caminosdelaconcagua.com.ar indicando el número de denuncia que se le asigne.</p></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend><span class="n">8</span>Declaraciones</legend>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <label class="decl"><input type="checkbox" id="veracidad" name="veracidad" required><span class="req">Declaro bajo juramento que los datos consignados son verdaderos y que la documentación acompañada corresponde al hecho denunciado.</span></label>
+    <label class="decl"><input type="checkbox" id="datos" name="datos" required><span class="req">Presto consentimiento para el tratamiento de mis datos personales con la finalidad de gestionar esta denuncia, en los términos de la Ley 25.326.</span></label>
+    <p class="disclaimer">La recepción de esta denuncia no implica reconocimiento de responsabilidad por parte de la concesionaria. La documentación podrá ser verificada y podrá requerirse la inspección del vehículo.</p>
+  </div>
+</fieldset>
+
+<div class="notice crit errbox" id="errs" role="alert"></div>
+<div class="actions">
+  <button class="btn" type="submit" id="send">Registrar denuncia</button>
+  <span id="status" aria-live="polite"></span>
+</div>
+</form>
+
+<div id="done" class="done" hidden>
+  <div class="eyebrow" style="color:var(--muted)">Denuncia registrada</div>
+  <div class="ticket" id="doneNum"></div>
+  <p style="margin:0 0 6px">Conserve este número para cualquier presentación posterior.</p>
+  <p class="hint" id="doneFiles" style="margin:0 0 16px"></p>
+  <dl id="doneSum" style="margin-bottom:18px"></dl>
+  <div class="actions">
+    <button class="btn" type="button" id="toPeaje">Adjuntar ticket de peaje</button>
+    <button class="btn ghost" type="button" id="another">Cargar otra denuncia</button>
+  </div>
+</div>
+</section>
+
+<section id="view-peaje" role="tabpanel" aria-labelledby="tab-peaje" hidden>
+<form id="pf" novalidate>
+<fieldset>
+  <legend><span class="n">1</span>Denuncia a la que corresponde</legend>
+  <p class="hint" style="margin:0 0 14px">Ingrese el número asignado al registrar la denuncia y el dominio del vehículo, tal como figuran en la constancia.</p>
+  <div class="grid">
+    <div class="f c3"><label class="req" for="pNum">Número de denuncia</label><input id="pNum" required placeholder="DEN-261030-K7QX" style="font-family:var(--mono);text-transform:uppercase"></div>
+    <div class="f c3"><label class="req" for="pDom">Dominio (patente)</label><input id="pDom" required style="font-family:var(--mono);text-transform:uppercase"></div>
+  </div>
+</fieldset>
+<fieldset>
+  <legend><span class="n">2</span>Datos del comprobante</legend>
+  <div class="grid">
+    <div class="f c3"><label class="req" for="pEst">Estación de peaje</label><input id="pEst" required></div>
+    <div class="f c3"><label for="pMedio">Medio de pago</label><select id="pMedio"><option value="">Seleccionar…</option><option>Efectivo</option><option>Tarjeta de débito / crédito</option><option>TelePASE</option><option>Otro</option></select></div>
+    <div class="f c2"><label class="req" for="pFecha">Fecha del pago</label><input id="pFecha" type="date" required></div>
+    <div class="f c2"><label for="pHora">Hora</label><input id="pHora" type="time"></div>
+    <div class="f c2"><label for="pImp">Importe pagado ($)</label><input id="pImp" inputmode="decimal"></div>
+    <div class="f c3"><label for="pNro">N° de comprobante o factura</label><input id="pNro"></div>
+    <div class="f c3"><label for="pCat">Categoría cobrada</label><input id="pCat" placeholder="Ej.: Categoría 2, automóvil"></div>
+    <div class="f c6" id="pFileBox"><label class="req" for="pFile">Foto o PDF del ticket</label><input id="pFile" type="file" multiple required accept="image/jpeg,image/png,image/webp,application/pdf"><span class="hint">Que se lean la estación, la fecha y la hora. Si paga con TelePASE, adjunte el resumen o la factura donde figure el paso.</span></div>
+    <div class="f c6" id="pFileFallback" hidden><p class="hint" style="margin:0">En esta vista no se pueden adjuntar archivos. Envíe el ticket a atencionalusuario@caminosdelaconcagua.com.ar indicando el número de denuncia; los datos cargados aquí quedan registrados igual.</p></div>
+  </div>
+</fieldset>
+<div class="notice crit errbox" id="pErrs" role="alert"></div>
+<div class="actions">
+  <button class="btn" type="submit" id="pSend">Adjuntar comprobante</button>
+  <span id="pStatus" class="hint" aria-live="polite"></span>
+</div>
+</form>
+<div id="pDone" class="done" hidden>
+  <div class="eyebrow" style="color:var(--muted)">Comprobante de peaje agregado</div>
+  <div class="ticket" id="pDoneNum"></div>
+  <p id="pDoneMsg" style="margin:0 0 16px"></p>
+  <button class="btn ghost" type="button" id="pAnother">Adjuntar otro comprobante</button>
+</div>
+</section>
+
+<section id="view-reg" role="tabpanel" aria-labelledby="tab-reg" hidden>
+  <div class="summary">
+    <div><b id="sTotal">0</b><span>Denuncias</span></div>
+    <div><b id="sAviso">0</b><span>Sin aviso a aseguradora, 3+ días</span></div>
+    <div><b id="sMonto">$0</b><span>Monto reclamado</span></div>
+  </div>
+  <div class="tools">
+    <input id="q" type="search" placeholder="Buscar por nombre, dominio, lugar o número">
+    <select id="fEstado"><option value="">Todos los estados</option></select>
+    <button class="btn ghost" type="button" id="csv" hidden>Exportar CSV</button>
+  </div>
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>Número</th><th>Recibida</th><th>Denunciante</th><th>Vehículo</th><th>Hecho</th><th>Lugar</th><th style="text-align:right">Monto</th><th>Estado</th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+    <div class="empty" id="empty">Todavía no hay denuncias registradas. Las que se carguen en «Nueva denuncia» aparecen aquí.</div>
+  </div>
+</section>
+</div>
+</main>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const ESTADOS=["Recibida","En análisis","Documentación pendiente","Denunciada a aseguradora","Respondida","Cerrada"];
+const SIN_AVISO=["Recibida","En análisis","Documentación pendiente"];
+const fmt$=new Intl.NumberFormat("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:0});
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const form=$("#f");
+let db=null,assets=null,downloads=null,canWrite=true,rows=[],openId=null;
+
+/* ---------- campos condicionales ---------- */
+function toggle(){
+  document.querySelectorAll("[data-show]").forEach(el=>{
+    const [name,vals]=el.dataset.show.split("=");
+    const v=(form.elements[name]||{}).value||"";
+    el.hidden=!vals.split("|").includes(v);
+  });
+}
+form.addEventListener("change",e=>{toggle(); if(e.target.classList.contains("invalid")) e.target.classList.remove("invalid")});
+toggle();
+
+/* ---------- tabs ---------- */
+function show(which){
+  ["form","peaje","reg"].forEach(k=>{ $("#tab-"+k).setAttribute("aria-selected",String(k===which)); $("#view-"+k).hidden=k!==which; });
+}
+$("#tab-form").onclick=()=>show("form");
+$("#tab-peaje").onclick=()=>show("peaje");
+$("#tab-reg").onclick=()=>show("reg");
+
+/* ---------- validación ---------- */
+function validate(){
+  const bad=[];
+  form.querySelectorAll("[required]").forEach(el=>{
+    if(el.closest("[hidden]")) return;
+    const ok = el.type==="checkbox" ? el.checked : el.value.trim()!=="" && el.checkValidity();
+    el.classList.toggle("invalid",!ok);
+    if(!ok) bad.push(el);
+  });
+  const comp=form.querySelectorAll('input[name="componentes"]:checked').length;
+  $("#componentes").classList.toggle("invalid",!comp);
+  if(!comp) bad.push($("#componentes"));
+  const box=$("#errs");
+  if(bad.length){
+    box.textContent=`Faltan ${bad.length} dato${bad.length>1?"s":""} obligatorio${bad.length>1?"s":""} o con formato incorrecto. Están marcados en rojo.`;
+    box.classList.add("show");
+    const first=bad[0]; (first.querySelector?.("input")||first).focus?.();
+    first.scrollIntoView({block:"center",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+    return false;
+  }
+  box.classList.remove("show"); return true;
+}
+
+/* ---------- armado del registro ---------- */
+function genNum(){
+  const d=new Date(), p=n=>String(n).padStart(2,"0");
+  const abc="ABCDEFGHJKLMNPQRSTUVWXYZ23456789", r=new Uint32Array(4); crypto.getRandomValues(r);
+  return `DEN-${String(d.getFullYear()).slice(2)}${p(d.getMonth()+1)}${p(d.getDate())}-${[...r].map(x=>abc[x%abc.length]).join("")}`;
+}
+const val=n=>(form.elements[n]?.value||"").trim();
+const all=n=>[...form.querySelectorAll(`input[name="${n}"]:checked`)].map(i=>i.value);
+function num(s){ if(!s) return null; const n=Number(String(s).replace(/\./g,"").replace(",",".").replace(/[^\d.]/g,"")); return isFinite(n)&&n>0?n:null; }
+function build(numero,adjuntos){
+  return {
+    numero, recibida:new Date().toISOString(), canal:"Formulario web", estado:"Recibida", notas:"",
+    denunciante:{nombre:val("nombre"),caracter:val("caracter"),docTipo:val("docTipo"),docNum:val("docNum"),nacionalidad:val("nacionalidad"),domicilio:val("domicilio"),localidad:val("localidad"),telefono:val("telefono"),email:val("email")},
+    vehiculo:{tipo:val("vTipo"),marca:val("marca"),modelo:val("modelo"),dominio:val("dominio").toUpperCase(),anio:val("anio"),neumaticos:val("neumaticos"),titular:val("titular"),aseguradora:val("aseguradora"),poliza:val("poliza")},
+    conductor:{nombre:val("cNombre"),doc:val("cDoc"),licencia:val("cLic")},
+    hecho:{fecha:val("fecha"),hora:val("hora"),km:val("km"),sentido:val("sentido"),carril:val("carril"),referencia:val("referencia"),coordenadas:val("coords"),luz:val("luz"),clima:val("clima"),velocidad:val("velocidad"),senalizacion:val("senal"),ocupantes:val("ocupantes"),relato:val("relato"),lesionados:val("lesionados"),lesiones:val("lesiones")},
+    danos:{componentes:all("componentes"),posiciones:all("posiciones"),detalle:val("detalle"),monto:num(val("monto")),reparado:val("reparado"),inspeccion:val("inspeccion"),inspeccionLugar:val("inspLugar")},
+    constancias:{peaje:val("peaje"),peajeDetalle:val("peajeDet"),denuncia:val("denuncia"),denunciaDetalle:val("denunciaDet"),asistencia:all("asistencia"),testigos:val("testigos"),terceros:val("terceros")},
+    adjuntos, declaraciones:{veracidad:$("#veracidad").checked,datos:$("#datos").checked}
+  };
+}
+function typeFor(f){
+  const ok=["image/jpeg","image/png","image/webp","image/gif","application/pdf","video/mp4","video/webm"];
+  if(ok.includes(f.type)) return f.type;
+  const ext=(f.name.split(".").pop()||"").toLowerCase();
+  return {jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",webp:"image/webp",pdf:"application/pdf",mp4:"video/mp4"}[ext]||null;
+}
+
+/* ---------- envío ---------- */
+const status=t=>$("#status").textContent=t;
+form.addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!validate()) return;
+  if(!db||!canWrite){ $("#errs").textContent="Esta vista no puede guardar denuncias. Pida acceso de colaborador al responsable del formulario."; $("#errs").classList.add("show"); return; }
+  const btn=$("#send"); btn.disabled=true;
+  const numero=genNum(), adj=[], fallidos=[];
+  const files=assets?[...$("#adjuntos").files]:[];
+  for(let i=0;i<files.length;i++){
+    const f=files[i], t=typeFor(f);
+    status(`Subiendo archivo ${i+1} de ${files.length}…`);
+    if(!t){fallidos.push(`${f.name} (formato no admitido)`);continue}
+    try{const r=await assets.upload(f,{type:t}); adj.push({id:r.id,nombre:f.name,tipo:r.contentType})}
+    catch(err){fallidos.push(`${f.name}${err?.code==="too_large"?" (supera 20 MB)":""}`)}
+  }
+  status("Guardando denuncia…");
+  const rec=build(numero,adj);
+  try{
+    try{ await db.collection("denuncias").doc(numero).set(rec); }
+    catch(err){ if(err?.code==="unavailable"){ await new Promise(r=>setTimeout(r,800+Math.random()*700)); await db.collection("denuncias").doc(numero).set(rec);} else throw err; }
+  }catch(err){
+    btn.disabled=false; status("");
+    $("#errs").textContent= err?.code==="quota_exceeded" ? "El registro alcanzó su capacidad máxima. Avise al responsable del formulario." : "No se pudo guardar la denuncia. Revise la conexión e intente nuevamente; los datos cargados se conservan.";
+    $("#errs").classList.add("show"); return;
+  }
+  btn.disabled=false; status("");
+  $("#doneNum").textContent=numero;
+  $("#doneFiles").textContent = adj.length||fallidos.length ? `${adj.length} archivo${adj.length===1?"":"s"} adjunto${adj.length===1?"":"s"}.${fallidos.length?` No se pudieron adjuntar: ${fallidos.join(", ")}. Envíelos a atencionalusuario@caminosdelaconcagua.com.ar indicando el número.`:""}` : "Sin archivos adjuntos. Puede enviarlos a atencionalusuario@caminosdelaconcagua.com.ar indicando el número.";
+  const h=rec.hecho,v=rec.vehiculo;
+  $("#doneSum").innerHTML=[["Denunciante",rec.denunciante.nombre],["Vehículo",`${v.marca} ${v.modelo} · ${v.dominio}`],["Hecho",`${fDate(h.fecha)} ${h.hora} hs`],["Lugar",[h.km&&("km "+h.km),h.referencia].filter(Boolean).join(" · ")],["Daños",rec.danos.componentes.join(", ")]].map(([a,b])=>`<dt>${a}</dt><dd>${esc(b)}</dd>`).join("");
+  lastDone={numero,dominio:v.dominio};
+  form.hidden=true; $("#done").hidden=false; window.scrollTo(0,0);
+});
+let lastDone=null;
+$("#toPeaje").onclick=()=>{ if(lastDone){ $("#pNum").value=lastDone.numero; $("#pDom").value=lastDone.dominio; } pReset(false); show("peaje"); $("#pEst").focus(); };
+
+/* ---------- ticket de peaje ---------- */
+const pf=$("#pf");
+function pReset(clear=true){ if(clear) pf.reset(); pf.querySelectorAll(".invalid").forEach(x=>x.classList.remove("invalid")); $("#pErrs").classList.remove("show"); $("#pDone").hidden=true; pf.hidden=false; }
+pf.addEventListener("input",e=>e.target.classList.remove("invalid"));
+pf.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const box=$("#pErrs"), err=t=>{box.textContent=t;box.classList.add("show")}, st=t=>$("#pStatus").textContent=t;
+  pf.querySelectorAll(".invalid").forEach(x=>x.classList.remove("invalid"));
+  const bad=[...pf.querySelectorAll("[required]")].filter(el=>!el.closest("[hidden]")&&!(el.type==="file"?el.files.length:el.value.trim()));
+  bad.forEach(x=>x.classList.add("invalid"));
+  if(bad.length){ err("Complete los datos marcados en rojo."); bad[0].focus(); return; }
+  if(!db||!canWrite){ err("Esta vista no puede guardar datos. Pida acceso de colaborador al responsable del formulario."); return; }
+  box.classList.remove("show");
+  const nro=$("#pNum").value.trim().toUpperCase(), norm=s=>String(s||"").replace(/[\s.-]/g,"").toUpperCase();
+  const btn=$("#pSend"); btn.disabled=true; st("Buscando la denuncia…");
+  let r=null, ref=null;
+  try{ ref=db.doc("denuncias/"+nro); const s=await ref.get(); r=s.exists?s.data():null; }catch{ r=null; }
+  if(!r||norm(r.vehiculo?.dominio)!==norm($("#pDom").value)){
+    btn.disabled=false; st(""); err("No encontramos una denuncia con ese número y dominio. Verifique ambos datos tal como figuran en la constancia de registro."); return;
+  }
+  const files=assets?[...$("#pFile").files]:[], nuevos=[], fallidos=[];
+  for(let i=0;i<files.length;i++){
+    const f=files[i], t=typeFor(f); st(`Subiendo archivo ${i+1} de ${files.length}…`);
+    if(!t){fallidos.push(`${f.name} (formato no admitido)`);continue}
+    try{ const u=await assets.upload(f,{type:t}); nuevos.push({id:u.id,nombre:f.name,tipo:u.contentType,clase:"peaje"}); }
+    catch(x){ fallidos.push(`${f.name}${x?.code==="too_large"?" (supera 20 MB)":""}`); }
+  }
+  if(files.length&&!nuevos.length){ btn.disabled=false; st(""); err(`No se pudo subir el ticket: ${fallidos.join(", ")}. Intente con una foto JPG o un PDF.`); return; }
+  const g=id=>$(id).value.trim();
+  const ticket={estacion:g("#pEst"),medio:g("#pMedio"),fecha:g("#pFecha"),hora:g("#pHora"),importe:num(g("#pImp")),comprobante:g("#pNro"),categoria:g("#pCat"),archivos:nuevos.map(a=>a.id),cargado:new Date().toISOString()};
+  const det=[ticket.estacion,fDate(ticket.fecha),ticket.hora&&(ticket.hora+" hs")].filter(Boolean).join(" · ");
+  st("Guardando…");
+  try{
+    await ref.update({peajeTickets:[...(r.peajeTickets||[]),ticket],adjuntos:[...(r.adjuntos||[]),...nuevos],constancias:{peaje:ticket.medio==="TelePASE"?"Paga con TelePASE":"Sí",peajeDetalle:det}});
+  }catch{ btn.disabled=false; st(""); err("No se pudo guardar el comprobante. Revise la conexión e intente nuevamente; los datos cargados se conservan."); return; }
+  btn.disabled=false; st("");
+  $("#pDoneNum").textContent=nro;
+  $("#pDoneMsg").textContent=`Se agregó el comprobante de ${det}${nuevos.length?` con ${nuevos.length} archivo${nuevos.length>1?"s":""}`:""}.${fallidos.length?` No se pudieron adjuntar: ${fallidos.join(", ")}.`:""}`;
+  pf.hidden=true; $("#pDone").hidden=false; window.scrollTo(0,0);
+});
+$("#pAnother").onclick=()=>pReset(true);
+$("#another").onclick=()=>{form.reset();toggle();form.querySelectorAll(".invalid").forEach(x=>x.classList.remove("invalid"));$("#done").hidden=true;form.hidden=false;window.scrollTo(0,0)};
+
+/* ---------- registro ---------- */
+function fDate(s){ if(!s) return "s/f"; const [y,m,d]=s.split("-"); return d?`${d}/${m}/${y}`:s; }
+function dias(iso){ return Math.floor((Date.now()-new Date(iso).getTime())/86400000); }
+ESTADOS.forEach(s=>$("#fEstado").insertAdjacentHTML("beforeend",`<option>${s}</option>`));
+$("#q").addEventListener("input",render); $("#fEstado").addEventListener("change",render);
+function pillFor(r){
+  const d=dias(r.recibida);
+  if(SIN_AVISO.includes(r.estado)&&d>=3) return `<span class="pill crit">${d} días sin aviso</span>`;
+  if(r.estado==="Cerrada"||r.estado==="Respondida") return `<span class="pill ok">${esc(r.estado)}</span>`;
+  return "";
+}
+function render(){
+  const q=$("#q").value.trim().toLowerCase(), fe=$("#fEstado").value;
+  $("#regCount").textContent=rows.length;
+  $("#sTotal").textContent=rows.length;
+  $("#sAviso").textContent=rows.filter(r=>SIN_AVISO.includes(r.estado)&&dias(r.recibida)>=3).length;
+  $("#sMonto").textContent=fmt$.format(rows.reduce((a,r)=>a+(r.danos?.monto||0),0));
+  const list=rows.filter(r=>(!fe||r.estado===fe)&&(!q||JSON.stringify([r.numero,r.denunciante?.nombre,r.vehiculo?.dominio,r.vehiculo?.marca,r.hecho?.referencia,r.hecho?.km]).toLowerCase().includes(q)));
+  $("#empty").hidden=rows.length>0;
+  $("#tb").innerHTML=list.map(r=>{
+    const v=r.vehiculo||{},h=r.hecho||{},m=r.danos?.monto;
+    const sel=canWrite?`<select data-estado="${esc(r.numero)}" aria-label="Estado de ${esc(r.numero)}">${ESTADOS.map(s=>`<option${s===r.estado?" selected":""}>${s}</option>`).join("")}</select>`:esc(r.estado);
+    const main=`<tr class="row" data-id="${esc(r.numero)}" tabindex="0"><td class="mono">${esc(r.numero)}</td><td class="mono">${esc(fDate((r.recibida||"").slice(0,10)))}</td><td>${esc(r.denunciante?.nombre)}<div class="hint">${esc(r.canal||"")}</div></td><td>${esc([v.marca,v.modelo].filter(Boolean).join(" ")||v.tipo||"—")}<div class="hint mono">${esc(v.dominio||"s/dominio")}</div></td><td class="mono">${esc(fDate(h.fecha))}${h.hora?`<div class="hint">${esc(h.hora)} hs</div>`:""}</td><td>${esc([h.km&&("km "+h.km),h.referencia].filter(Boolean).join(" · "))}</td><td class="num">${m?fmt$.format(m):"—"}</td><td>${sel}<div style="margin-top:4px">${pillFor(r)}</div></td></tr>`;
+    return main+(openId===r.numero?detail(r):"");
+  }).join("");
+}
+function dl(pairs){ const p=pairs.filter(([,b])=>b&&String(b).trim()); return p.length?`<dl>${p.map(([a,b])=>`<dt>${a}</dt><dd>${esc(b)}</dd>`).join("")}</dl>`:`<p class="hint" style="margin:0">Sin datos.</p>`; }
+function detail(r){
+  const d=r.denunciante||{},v=r.vehiculo||{},c=r.conductor||{},h=r.hecho||{},x=r.danos||{},k=r.constancias||{};
+  const files=(r.adjuntos||[]).map(a=>`<a href="/_blob/${encodeURIComponent(a.id)}" target="_blank" rel="noopener">${a.clase==="peaje"?"Peaje: ":""}${esc(a.nombre||"archivo")}</a>`).join("");
+  const pt=r.peajeTickets||[];
+  const peajeHtml=pt.length?pt.map(t=>dl([["Estación",t.estacion],["Fecha",[fDate(t.fecha),t.hora&&(t.hora+" hs")].filter(Boolean).join(" · ")],["Importe",t.importe?fmt$.format(t.importe):""],["Medio",t.medio],["Comprobante",t.comprobante],["Categoría",t.categoria],["Archivos",t.archivos?.length?String(t.archivos.length):"Sin archivo"]])).join('<hr class="peajehr">'):'<p class="hint" style="margin:0">No acompañado.</p>';
+  return `<tr class="detail"><td colspan="8">
+  <div class="dgrid">
+    <div><h4>Denunciante</h4>${dl([["Nombre",d.nombre],["Carácter",d.caracter],["Documento",[d.docTipo,d.docNum].filter(Boolean).join(" ")],["Nacionalidad",d.nacionalidad],["Domicilio",[d.domicilio,d.localidad].filter(Boolean).join(", ")],["Teléfono",d.telefono],["Correo",d.email]])}</div>
+    <div><h4>Vehículo</h4>${dl([["Tipo",v.tipo],["Marca y modelo",[v.marca,v.modelo,v.anio].filter(Boolean).join(" ")],["Dominio",v.dominio],["Neumáticos",v.neumaticos],["Titular",v.titular],["Seguro",[v.aseguradora,v.poliza&&("póliza "+v.poliza)].filter(Boolean).join(" · ")],["Conductor",[c.nombre,c.doc,c.licencia&&("lic. "+c.licencia)].filter(Boolean).join(" · ")]])}</div>
+    <div><h4>Hecho</h4>${dl([["Fecha y hora",`${fDate(h.fecha)}${h.hora?" · "+h.hora+" hs":""}`],["Km",h.km],["Sentido",h.sentido],["Carril",h.carril],["Referencia",h.referencia],["Coordenadas",h.coordenadas],["Luz / clima",[h.luz,h.clima].filter(Boolean).join(" · ")],["Velocidad",h.velocidad&&(h.velocidad+" km/h")],["Señalización",h.senalizacion],["Ocupantes",h.ocupantes],["Lesionados",h.lesionados==="Sí"?("Sí · "+(h.lesiones||"")):h.lesionados]])}</div>
+    <div><h4>Daños</h4>${dl([["Partes",(x.componentes||[]).join(", ")],["Ruedas",(x.posiciones||[]).join(", ")],["Monto",x.monto?fmt$.format(x.monto):""],["Reparado",x.reparado],["Inspección",[x.inspeccion,x.inspeccionLugar].filter(Boolean).join(" · ")]])}</div>
+    <div><h4>Constancias</h4>${dl([["Peaje",[k.peaje,k.peajeDetalle].filter(Boolean).join(" · ")],["Denuncia",[k.denuncia,k.denunciaDetalle].filter(Boolean).join(" · ")],["Asistencia",(k.asistencia||[]).join(", ")],["Testigos",k.testigos],["Terceros",k.terceros]])}</div>
+    <div><h4>Ticket de peaje</h4>${peajeHtml}</div>
+  </div>
+  ${h.relato?`<h4 style="margin:16px 0 6px;font:700 15px var(--display)">Relato</h4><div class="relato">${esc(h.relato)}</div>`:""}
+  ${x.detalle?`<h4 style="margin:14px 0 6px;font:700 15px var(--display)">Detalle de daños</h4><div class="relato">${esc(x.detalle)}</div>`:""}
+  <h4 style="margin:14px 0 6px;font:700 15px var(--display)">Archivos</h4><div class="files">${files||'<span class="hint">Sin archivos en el registro.</span>'}</div>
+  ${canWrite?`<div class="notes"><div class="f" style="flex:1 1 280px"><label for="n-${esc(r.numero)}">Notas internas</label><textarea id="n-${esc(r.numero)}" data-notas="${esc(r.numero)}">${esc(r.notas||"")}</textarea></div><button class="btn ghost" type="button" data-savenotas="${esc(r.numero)}">Guardar notas</button><span class="hint" id="ns-${esc(r.numero)}"></span></div>`:(r.notas?`<p class="relato"><b>Notas:</b> ${esc(r.notas)}</p>`:"")}
+  </td></tr>`;
+}
+$("#tb").addEventListener("click",async e=>{
+  const sv=e.target.closest("[data-savenotas]");
+  if(sv){ const id=sv.dataset.savenotas, t=document.querySelector(`[data-notas="${CSS.escape(id)}"]`).value, s=document.getElementById("ns-"+id);
+    sv.disabled=true; try{await db.doc("denuncias/"+id).update({notas:t}); s.textContent="Notas guardadas"}catch{ s.textContent="No se pudieron guardar las notas"} sv.disabled=false; return; }
+  if(e.target.closest("select,textarea,a,button")) return;
+  const tr=e.target.closest("tr.row"); if(!tr) return;
+  openId=openId===tr.dataset.id?null:tr.dataset.id; render();
+});
+$("#tb").addEventListener("keydown",e=>{ if((e.key==="Enter"||e.key===" ")&&e.target.matches("tr.row")){e.preventDefault(); openId=openId===e.target.dataset.id?null:e.target.dataset.id; render(); document.querySelector(`tr.row[data-id="${CSS.escape(openId||e.target.dataset.id)}"]`)?.focus();}});
+$("#tb").addEventListener("change",async e=>{
+  const s=e.target.closest("[data-estado]"); if(!s) return;
+  s.disabled=true; try{await db.doc("denuncias/"+s.dataset.estado).update({estado:s.value})}catch{ render() } s.disabled=false;
+});
+
+/* ---------- CSV ---------- */
+function csv(){
+  const cols=[["Número",r=>r.numero],["Recibida",r=>(r.recibida||"").slice(0,10)],["Canal",r=>r.canal],["Estado",r=>r.estado],["Denunciante",r=>r.denunciante?.nombre],["Carácter",r=>r.denunciante?.caracter],["Documento",r=>[r.denunciante?.docTipo,r.denunciante?.docNum].filter(Boolean).join(" ")],["Teléfono",r=>r.denunciante?.telefono],["Correo",r=>r.denunciante?.email],["Vehículo",r=>[r.vehiculo?.tipo,r.vehiculo?.marca,r.vehiculo?.modelo].filter(Boolean).join(" ")],["Dominio",r=>r.vehiculo?.dominio],["Aseguradora",r=>r.vehiculo?.aseguradora],["Fecha hecho",r=>r.hecho?.fecha],["Hora",r=>r.hecho?.hora],["Km",r=>r.hecho?.km],["Sentido",r=>r.hecho?.sentido],["Referencia",r=>r.hecho?.referencia],["Coordenadas",r=>r.hecho?.coordenadas],["Luz",r=>r.hecho?.luz],["Clima",r=>r.hecho?.clima],["Señalización",r=>r.hecho?.senalizacion],["Lesionados",r=>r.hecho?.lesionados],["Partes dañadas",r=>(r.danos?.componentes||[]).join(" / ")],["Ruedas",r=>(r.danos?.posiciones||[]).join(" / ")],["Detalle daños",r=>r.danos?.detalle],["Monto",r=>r.danos?.monto??""],["Reparado",r=>r.danos?.reparado],["Inspección",r=>[r.danos?.inspeccion,r.danos?.inspeccionLugar].filter(Boolean).join(" - ")],["Peaje",r=>[r.constancias?.peaje,r.constancias?.peajeDetalle].filter(Boolean).join(" - ")],["Ticket de peaje acompañado",r=>(r.peajeTickets||[]).length?"Sí":"No"],["Importe peaje",r=>(r.peajeTickets||[]).map(t=>t.importe??"").join(" / ")],["Comprobante peaje",r=>(r.peajeTickets||[]).map(t=>t.comprobante).filter(Boolean).join(" / ")],["Denuncia policial",r=>[r.constancias?.denuncia,r.constancias?.denunciaDetalle].filter(Boolean).join(" - ")],["Testigos",r=>r.constancias?.testigos],["Relato",r=>r.hecho?.relato],["Archivos",r=>(r.adjuntos||[]).length],["Notas",r=>r.notas]];
+  const q=v=>{const s=String(v??""); return /[";\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s};
+  return "﻿"+[cols.map(c=>q(c[0])).join(";"),...rows.map(r=>cols.map(c=>q(c[1](r))).join(";"))].join("\r\n");
+}
+$("#csv").onclick=async()=>{ try{ await downloads.save({filename:`denuncias-rn7-${new Date().toISOString().slice(0,10)}.csv`,data:csv()}) }catch(e){} };
+
+/* ---------- capacidades ---------- */
+(async()=>{
+  const C=window.claude; if(!C?.use){ $("#dbNotice").hidden=false; return; }
+  const [d,a,u,dw]=await Promise.all([C.use("db"),C.use("assets"),C.use("user"),C.use("downloads")]);
+  db=d; assets=a; downloads=dw;
+  if(!assets){ $("#fileBox").hidden=true; $("#fileFallback").hidden=false; $("#pFileBox").hidden=true; $("#pFileFallback").hidden=false; }
+  if(!db){ $("#dbNotice").hidden=false; return; }
+  try{ const w=u?await u.can("data.write"):null; if(w===false) canWrite=false; }catch{}
+  if(!canWrite) $("#dbNotice").hidden=false;
+  if(downloads) $("#csv").hidden=false;
+  db.collection("denuncias").orderBy("recibida","desc").onSnapshot(s=>{
+    rows=s.docs.map(x=>x.data());
+    if(rows.length||canWrite) $("#tab-reg").hidden=false;
+    render();
+  },()=>{});
+})();
+})();
+</script>
+
+</body></html>
